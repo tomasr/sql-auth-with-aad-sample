@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "sql+wa+kvcert", "sql+wa+kvcert\sql+wa+kvcert.deployproj", "{81254248-BCB9-4DEB-9518-89153E19E297}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81254248-BCB9-4DEB-9518-89153E19E297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81254248-BCB9-4DEB-9518-89153E19E297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81254248-BCB9-4DEB-9518-89153E19E297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81254248-BCB9-4DEB-9518-89153E19E297}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CAA8AE3-43C5-4E84-B843-96B285674588}
+	EndGlobalSection
+EndGlobal
