@@ -21,6 +21,14 @@
         "sqlServerAdminLoginPassword": {
             "type": "securestring"
         },
+        "sqlServerAdAdmin": {
+            "type": "string",
+            "minLength": 1
+        },
+        "sqlServerAdAdminObjectId": {
+            "type": "string",
+            "minLength": 1
+        },
         "sqlDbName": {
             "type": "string",
             "minLength": 1
@@ -73,6 +81,21 @@
                 "administratorLoginPassword": "[parameters('sqlServerAdminLoginPassword')]"
             },
             "resources": [
+            {
+                "name": "activedirectory",
+                "type": "administrators",
+                "location": "[resourceGroup().location]",
+                "apiVersion": "2014-04-01-preview",
+                "dependsOn": [
+                    "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+                ],
+                "properties": {
+                    "administratorType": "ActiveDirectory",
+                    "login": "[parameters('sqlServerAdAdmin')]",
+                    "sid": "[parameters('sqlServerAdAdminObjectId')]",
+                    "tenantId": "[subscription().tenantId]"
+                }
+            },
                 {
                     "name": "AllowAllWindowsAzureIps",
                     "type": "firewallrules",
