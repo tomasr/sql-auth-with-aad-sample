@@ -30,6 +30,12 @@ function New-KeyVaultSelfSignedCert {
   (Get-AzureKeyVaultCertificate -VaultName $keyVault -Name $certificateName).Certificate
 }
 
+function Set-KeyVaultAccessToAppService($keyVault) {
+  Set-AzureRmKeyVaultAccessPolicy -VaultName $keyVault `
+                                  -ServicePrincipalName 'abfa0a7c-a6b6-4736-8310-5855508787cd' `
+                                  -PermissionsToSecrets get
+}
+
 
 $certName = "SPCert-$principalName"
 $cert = New-KeyVaultSelfSignedCert -keyVault $keyVaultName `
@@ -39,6 +45,9 @@ $cert = New-KeyVaultSelfSignedCert -keyVault $keyVaultName `
                                    -renewDaysBefore 1
 
 Write-Verbose "Certificate generated $($cert.Thumbprint)"
+
+Set-KeyVaultAccessToAppService -keyVault $keyVaultName
+Write-Verbose 'Granted access to App Service to Key Vault'
 
 $certString = [Convert]::ToBase64String($cert.GetRawCertData())
 
