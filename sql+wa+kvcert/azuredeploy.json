@@ -6,6 +6,10 @@
             "type": "string",
             "minLength": 1
         },
+        "keyVaultRGName": {
+            "type": "string",
+            "minLength": 1
+        },
         "keyVaultName": {
             "type": "string",
             "minLength": 1
@@ -62,9 +66,36 @@
             "metadata": {
                 "description": "Describes the performance level for Edition"
             }
+        },
+        "webAppPlanName": {
+            "type": "string",
+            "minLength": 1
+        },
+        "webAppPlanSkuName": {
+            "type": "string",
+            "defaultValue": "F1",
+            "allowedValues": [
+                "F1",
+                "D1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1",
+                "P2",
+                "P3",
+                "P4"
+            ],
+            "metadata": {
+                "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+            }
+        },
+        "webAppName": {
+            "type": "string",
+            "minLength": 1
         }
-    },
-    "variables": {
     },
     "resources": [
         {
@@ -128,6 +159,68 @@
                     }
                 }
             ]
+        },
+
+
+
+
+
+        {
+            "name": "[parameters('webAppPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-08-01",
+            "sku": {
+                "name": "[parameters('webAppPlanSkuName')]"
+            },
+            "dependsOn": [],
+            "tags": {
+                "displayName": "App Service Plan"
+            },
+            "properties": {
+                "name": "[parameters('webAppPlanName')]",
+                "numberOfWorkers": 1
+            }
+        },
+        {
+            "name": "[parameters('webAppName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-08-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]"
+            ],
+            "tags": {
+                "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName')))]": "Resource",
+                "displayName": "Web Application"
+            },
+            "properties": {
+                "name": "[parameters('webAppName')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]",
+                "siteConfig": {
+                    "appsettings": {
+                        "CERT_SUBJECT_NAME": "[concat('CN=', parameters('servicePrincipalName'))]"
+                    },
+                    "connectionstrings": [
+                        {
+                            "name": "SqlDb",
+                            "connectionString": "[concat('Data Source=tcp:', parameters('sqlServerName'), '.database.windows.net:1433, Initial Catalog=', parameters('sqlDbName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('servicePrincipalName'))]",
+            "type": "Microsoft.Web/certificates",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-08-01",
+            "properties": {
+                "keyVaultId": "[resourceId(parameters('keyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                "keyVaultSecretName": "[concat('SPCert-', parameters('servicePrincipalName'))]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]"
+            }
+
         }
     ],
     "outputs": {}
