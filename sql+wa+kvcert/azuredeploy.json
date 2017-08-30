@@ -73,7 +73,7 @@
         },
         "webAppPlanSkuName": {
             "type": "string",
-            "defaultValue": "F1",
+            "defaultValue": "B1",
             "allowedValues": [
                 "F1",
                 "D1",
@@ -198,17 +198,31 @@
                 "name": "[parameters('webAppName')]",
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]",
                 "siteConfig": {
-                    "appsettings": {
-                        "CERT_SUBJECT_NAME": "[concat('CN=', parameters('servicePrincipalName'))]"
-                    },
-                    "connectionstrings": [
+                    "connectionStrings": [
                         {
                             "name": "SqlDb",
-                            "connectionString": "[concat('Data Source=tcp:', parameters('sqlServerName'), '.database.windows.net:1433, Initial Catalog=', parameters('sqlDbName'))]"
+                            "connectionString": "[concat('Data Source=tcp:', parameters('sqlServerName'), '.database.windows.net,1433; Initial Catalog=', parameters('sqlDbName'))]"
                         }
                     ]
                 }
-            }
+            },
+            "resources": [
+                {
+                    "name": "appsettings",
+                    "type": "config",
+                    "apiVersion": "2015-08-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+                    ],
+                    "properties": {
+                        "CERT_SUBJECT_NAME": "[parameters('servicePrincipalName')]",
+                        "SERVICE_PRINCIPAL_NAME": "[parameters('servicePrincipalName')]",
+                        "AAD_TENANT_ID": "[subscription().tenantId]",
+                        "WEBSITE_LOAD_CERTIFICATES": "*"
+                    }
+                }
+            ]
+
         },
         {
             "name": "[concat(parameters('servicePrincipalName'))]",
