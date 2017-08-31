@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Web;
+using BootstrapContext = System.IdentityModel.Tokens.BootstrapContext;
 
 namespace UsingTokenAuthApp.Controllers
 {
@@ -42,6 +44,22 @@ namespace UsingTokenAuthApp.Controllers
             var credential = new ClientAssertionCertificate($"http://{ServicePrincipalName}", certificate);
 
             var result = await context.AcquireTokenAsync(SqlResource, credential);
+            return result.AccessToken;
+        }
+
+        public static async Task<String> GetDelegatedTokenAsync(ClaimsPrincipal user)
+        {
+            var context = new AuthenticationContext(Authority);
+            var certificate = FindCertificate(CertSubjectName);
+            if (certificate == null)
+                throw new InvalidOperationException("Could not load certificate");
+
+            var id = (ClaimsIdentity)user.Identity;
+            var bootstrap = id.BootstrapContext as BootstrapContext;
+            var credential = new ClientAssertionCertificate($"http://{ServicePrincipalName}", certificate);
+
+            var userAssertion = new UserAssertion(bootstrap.Token);
+            var result = await context.AcquireTokenAsync(SqlResource, credential, userAssertion);
             return result.AccessToken;
         }
     }

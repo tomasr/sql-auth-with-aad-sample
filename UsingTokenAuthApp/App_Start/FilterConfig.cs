@@ -7,6 +7,7 @@ namespace UsingTokenAuthApp
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
+            filters.Add(new AuthorizeAttribute());
         }
     }
 }

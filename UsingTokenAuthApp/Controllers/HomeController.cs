@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -14,6 +15,18 @@ namespace UsingTokenAuthApp.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<ActionResult> UsingDelegation()
+        {
+            var user = this.User as ClaimsPrincipal;
+            var token = await ADAuthentication.GetDelegatedTokenAsync(user);
+
+            String cs = ConfigurationManager.ConnectionStrings["SqlDb"].ConnectionString;
+            var sqlUser = await GetSqlUserName(cs, token);
+
+            ViewBag.SqlUserName = sqlUser;
+            return View("DelegatedContext");
         }
 
         public async Task<ActionResult> UsingSP()

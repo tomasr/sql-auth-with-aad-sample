@@ -95,6 +95,10 @@
         "webAppName": {
             "type": "string",
             "minLength": 1
+        },
+        "webAppApplicationId": {
+            "type": "string",
+            "minLength": 1
         }
     },
     "resources": [
@@ -218,7 +222,8 @@
                         "CERT_SUBJECT_NAME": "[parameters('servicePrincipalName')]",
                         "SERVICE_PRINCIPAL_NAME": "[parameters('servicePrincipalName')]",
                         "AAD_TENANT_ID": "[subscription().tenantId]",
-                        "WEBSITE_LOAD_CERTIFICATES": "*"
+                        "WEBSITE_LOAD_CERTIFICATES": "*",
+                        "APP_CLIENT_ID": "[parameters('webAppApplicationId')]"
                     }
                 }
             ]
