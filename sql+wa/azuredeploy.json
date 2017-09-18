@@ -2,18 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "servicePrincipalName": {
-            "type": "string",
-            "minLength": 1
-        },
-        "keyVaultRGName": {
-            "type": "string",
-            "minLength": 1
-        },
-        "keyVaultName": {
-            "type": "string",
-            "minLength": 1
-        },
         "sqlServerName": {
             "type": "string",
             "minLength": 1
@@ -93,10 +81,6 @@
             }
         },
         "webAppName": {
-            "type": "string",
-            "minLength": 1
-        },
-        "webAppApplicationId": {
             "type": "string",
             "minLength": 1
         }
@@ -198,6 +182,9 @@
                 "[concat('hidden-related:', resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName')))]": "Resource",
                 "displayName": "Web Application"
             },
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "name": "[parameters('webAppName')]",
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]",
@@ -219,26 +206,10 @@
                         "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
                     ],
                     "properties": {
-                        "CERT_SUBJECT_NAME": "[parameters('servicePrincipalName')]",
-                        "SERVICE_PRINCIPAL_NAME": "[parameters('servicePrincipalName')]",
-                        "AAD_TENANT_ID": "[subscription().tenantId]",
-                        "WEBSITE_LOAD_CERTIFICATES": "*",
-                        "APP_CLIENT_ID": "[parameters('webAppApplicationId')]"
+                        "AAD_TENANT_ID": "[subscription().tenantId]"
                     }
                 }
             ]
-
-        },
-        {
-            "name": "[concat(parameters('servicePrincipalName'))]",
-            "type": "Microsoft.Web/certificates",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2015-08-01",
-            "properties": {
-                "keyVaultId": "[resourceId(parameters('keyVaultRGName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
-                "keyVaultSecretName": "[concat('SPCert-', parameters('servicePrincipalName'))]",
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('webAppPlanName'))]"
-            }
 
         }
     ],
