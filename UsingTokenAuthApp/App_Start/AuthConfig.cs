@@ -11,6 +11,7 @@ namespace UsingTokenAuthApp
     {
         public static void RegisterAuth(IAppBuilder app)
         {
+            /*
             var clientId = ConfigurationManager.AppSettings["APP_CLIENT_ID"];
             var tenant = ConfigurationManager.AppSettings["AAD_TENANT_ID"];
 
@@ -26,6 +27,7 @@ namespace UsingTokenAuthApp
             };
             options.TokenValidationParameters.SaveSigninToken = true;
             app.UseOpenIdConnectAuthentication(options);
+            */
         }
     }
 }

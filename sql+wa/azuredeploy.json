@@ -90,10 +90,13 @@
             "name": "[parameters('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2014-04-01-preview",
+            "apiVersion": "2015-05-01-preview",
             "dependsOn": [],
             "tags": {
                 "displayName": "SQL Logical Server"
+            },
+            "identity": {
+                "type": "SystemAssigned"
             },
             "properties": {
                 "administratorLogin": "[parameters('sqlServerAdminLogin')]",
@@ -132,7 +135,7 @@
                     "name": "[parameters('sqlDbName')]",
                     "type": "databases",
                     "location": "[resourceGroup().location]",
-                    "apiVersion": "2014-04-01-preview",
+                    "apiVersion": "2015-05-01-preview",
                     "dependsOn": [
                         "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
                     ],
@@ -213,5 +216,10 @@
 
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "sqlIdentity": {
+            "type":"string",
+            "value": "[reference(concat('Microsoft.Sql/servers/', parameters('sqlServerName')), '2015-05-01-preview', 'Full').identity.principalId]"
+        }
+    }
 }

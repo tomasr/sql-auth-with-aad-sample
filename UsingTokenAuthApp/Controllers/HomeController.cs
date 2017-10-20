@@ -19,14 +19,7 @@ namespace UsingTokenAuthApp.Controllers
 
         public async Task<ActionResult> UsingDelegation()
         {
-            var user = this.User as ClaimsPrincipal;
-            var token = await ADAuthentication.GetDelegatedTokenAsync(user);
-
-            String cs = ConfigurationManager.ConnectionStrings["SqlDb"].ConnectionString;
-            var sqlUser = await GetSqlUserName(cs, token);
-
-            ViewBag.SqlUserName = sqlUser;
-            return View("DelegatedContext");
+            throw new NotImplementedException();
         }
 
         public async Task<ActionResult> UsingSP()

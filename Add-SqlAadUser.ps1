@@ -7,7 +7,7 @@ param(
     [Parameter(Mandatory=$true)]
     [PSCredential]$sqlAdminCredentials,
     [Parameter(Mandatory=$true)]
-    [String]$servicePrincipalName
+    [String]$aadUser
 )
 
 # For this script to work we need SqlCmd v14.1 or later
@@ -17,9 +17,9 @@ param(
 # https://www.microsoft.com/en-us/download/details.aspx?id=53339
 
 $query = @"
-CREATE USER [$servicePrincipalName] FROM EXTERNAL PROVIDER
+CREATE USER [$aadUser] FROM EXTERNAL PROVIDER
 GO
-ALTER ROLE db_owner ADD MEMBER [$servicePrincipalName]
+ALTER ROLE db_owner ADD MEMBER [$aadUser]
 "@
 
 sqlcmd.exe -S "tcp:$sqlServer,1433" `
